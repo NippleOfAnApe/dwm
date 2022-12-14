@@ -740,6 +740,7 @@ drawbar(Monitor *m)
 	int boxs = drw->fonts->h / 9;
 	int boxw = drw->fonts->h / 6 + 2;
 	unsigned int i, occ = 0, urg = 0;
+	const char *tagsymbol = NULL;
 	Client *c;
 
 	if (!m->showbar)
@@ -759,24 +760,19 @@ drawbar(Monitor *m)
 	}
 	x = 0;
 	for (i = 0; i < LENGTH(tags); i++) {
-		//Draw specific icons
-		//w = TEXTW(tags[i]);
-		//drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
-		//drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
-		//if (occ & 1 << i)
-		//	drw_rect(drw, x + boxs + 5, 20, w - ( 3 * boxw ), boxw / 2,		//shape of the rectangle on tags
-		//		m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
-		//		urg & 1 << i);
-		//x += w;
-
-		// Draw circles
-		w = TEXTW(circles[0]);
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
-		if (occ & 1 << i)
-			drw_text(drw, x, 0, w, bh, lrpad / 2, circles[0], urg & 1 << i);
-		else
-			drw_text(drw, x, 0, w, bh, lrpad / 2, circles[1], urg & 1 << i);
-
+		if (useTags) {
+			w = TEXTW(tags[i]);
+			drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
+			if (occ & 1 << i)
+				drw_rect(drw, x + boxs + 5, 20, w - ( 3 * boxw ), boxw / 2,	//shape of the rectangle on tags
+					m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
+					urg & 1 << i);
+		} else {
+			tagsymbol = dualtags[(occ & 1 << i) ? 0 : 1];
+			w = TEXTW(tagsymbol);
+			drw_text(drw, x, 0, w, bh, lrpad / 2, tagsymbol, urg & 1 << i);
+		}
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);

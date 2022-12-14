@@ -21,7 +21,9 @@ static const char *colors[][3]      = {
 };
 
 /* tagging */
-static const char *tags[] = { "一", "二", "三", "四", "五", "六", "七", "八", "九" };
+static const char *tags[] = { "", "", "", "", "", "", "", "", "" };
+static const char *dualtags[] = { "ﱣ", "ﱤ" };  /* 1st - active, 2nd - empty */
+static const int useTags = 0;   /* 1 - tags, 0 - circles */
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -45,15 +47,15 @@ static const Layout layouts[] = {
 	{ "[]",      monocle},    /* no layout function means floating behavior */
 };
 
-//static const char *upvol[]   = { "/home/george/.local/bin/volumePlus",     NULL };
-//static const char *downvol[] = { "/home/george/.local/bin/volumeMinus",     NULL };
-//static const char *mutevol[] = { "/usr/bin/amixer", "sset",   "Master", "toggle",  NULL };
-//static const char *light_up[] = {"/home/george/.local/bin/brightnessUp", NULL};
-//static const char *light_down[] = {"/home/george/.local/bin/brightnessDown", NULL};
-//static const char *prtScFull[] = { "/usr/bin/flameshot", "full", "-c", "-p", "/W/Media", NULL};
-//static const char *prtScGUI[] = { "/usr/bin/flameshot", "gui", NULL};
+static const char *upvol[]   = { "/home/george/.local/bin/volumePlus",     NULL };
+static const char *downvol[] = { "/home/george/.local/bin/volumeMinus",     NULL };
+static const char *mutevol[] = { "/hom/george/.local/bin/volumeMute",  NULL };
+static const char *light_up[] = {"/home/george/.local/bin/brightnessUp", NULL};
+static const char *light_down[] = {"/home/george/.local/bin/brightnessDown", NULL};
+static const char *prtScFull[] = { "/usr/bin/flameshot", "full", "-c", "-p", "/W/Media", NULL};
+static const char *prtScGUI[] = { "/usr/bin/flameshot", "gui", NULL};
 //static const char *dmenuemoji[]  = { "/home/george/.local/bin/dmenuunicode", NULL };
-//static const char *clipmenu[] = { "/usr/bin/clipmenu", NULL};
+static const char *clipmenu[] = { "/usr/bin/clipmenu", NULL};
 //static const char *spawnSlock[] = { "/usr/local/bin/slock", NULL};
 
 /* key definitions */
@@ -72,9 +74,7 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[] = { "st", NULL };
 static const char *browsercmd[] = { "firefox", NULL };
-//static const char *codiumcmd[] = { "/usr/bin/codium", NULL };
-//static const char *telegram[] = { "telegram-desktop", NULL };
-//static const char *pcmanfm[] = { "pcmanfm", NULL };
+static const char *telegram[] = { "telegram-desktop", NULL };
 
 #include "movestack.c"
 #include <X11/XF86keysym.h>	//https://github.com/freedesktop/xorg-x11proto/blob/master/XF86keysym.h
@@ -82,13 +82,11 @@ static const char *browsercmd[] = { "firefox", NULL };
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_r,      spawn,          {.v = dmenucmd } },
-	{ MODKEY,             			XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY,             			XK_F2, 	   spawn,          {.v = browsercmd } },
-	//{ MODKEY,             			XK_F3, 	   spawn,          {.v = codiumcmd } },
-	//{ MODKEY,             			XK_F4, 	   spawn,          {.v = telegram } },
-	//{ MODKEY,             			XK_F1, 	   spawn,          {.v = pcmanfm } },
+	{ MODKEY,             		XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY,             		XK_F2, 	   spawn,          {.v = browsercmd } },
+	{ MODKEY,             		XK_F4, 	   spawn,          {.v = telegram } },
 	//{ MODKEY|ShiftMask,             XK_f, 	   spawn,          {.v = dmenuemoji } },
-	//{ MODKEY|ShiftMask,             XK_d, 	   spawn,          {.v = clipmenu } },
+	{ MODKEY|ShiftMask,             XK_c, 	   spawn,          {.v = clipmenu } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_a,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_d,      focusstack,     {.i = -1 } },
@@ -96,14 +94,14 @@ static Key keys[] = {
 	{ MODKEY,                       XK_o,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_q,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_e,      setmfact,       {.f = +0.05} },
-	{ MODKEY,             			XK_z,      setcfact,       {.f = +0.25} },
-	{ MODKEY,             			XK_c,      setcfact,       {.f = -0.25} },
-	{ MODKEY,             			XK_x,      setcfact,       {.f =  0.00} },
+	{ MODKEY,             		XK_z,      setcfact,       {.f = +0.25} },
+	{ MODKEY,             		XK_c,      setcfact,       {.f = -0.25} },
+	{ MODKEY,             		XK_x,      setcfact,       {.f =  0.00} },
 	{ MODKEY|ShiftMask,             XK_a,      movestack,      {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_d,      movestack,      {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
-	{ MODKEY,             			XK_w,      killclient,     {0} },
+	{ MODKEY,             		XK_w,      killclient,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
@@ -118,17 +116,14 @@ static Key keys[] = {
 	{ MODKEY,                       XK_minus,  setgaps,        {.i = -1 } },
 	{ MODKEY,                       XK_equal,  setgaps,        {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_equal,  setgaps,        {.i = 0  } },
-    //{ MODKEY,						XK_Print,   spawn,		   {.v = prtScGUI}},
-    //{ 0,						    XK_Print,   spawn,		   {.v = prtScFull}},
-    //{ MODKEY,					    XK_BackSpace,   spawn,		   {.v = spawnSlock}},
-	//{ 0,     		XF86XK_AudioLowerVolume,   spawn, 		   {.v = downvol } },
-	//{ 0,         	XF86XK_AudioMute, 		   spawn,          {.v = mutevol } },
-	//{ 0,         	XF86XK_AudioRaiseVolume,   spawn, 		   {.v = upvol   } },
-	//{ 0,			XF86XK_MonBrightnessUp,	   spawn,		   {.v = light_up}},
-	//{ 0,			XF86XK_MonBrightnessDown,  spawn,	  	   {.v = light_down}},
-//	{ 0,			XF86XK_AudioStop,  		   spawn,	  	   {.v = spawnSlock}},
-//	{ 0,							XK_Print,	   spawn,		   {.v = prtScFull}},
-//	{ MODKEY,						XK_Print,	   spawn,		   {.v = prtScGUI}},
+	{ MODKEY,			XK_Print,  spawn,	   {.v = prtScGUI}},
+    	{ 0,				XK_Print,  spawn,	   {.v = prtScFull}},
+    //{ MODKEY,				XK_BackSpace,   spawn,		   {.v = spawnSlock}},
+	{ 0,     	XF86XK_AudioLowerVolume,   spawn, 	   {.v = downvol } },
+	{ 0,         	XF86XK_AudioMute, 	   spawn,          {.v = mutevol } },
+	{ 0,         	XF86XK_AudioRaiseVolume,   spawn, 	   {.v = upvol   } },
+	{ 0,		XF86XK_MonBrightnessUp,	   spawn, 	   {.v = light_up}},
+	{ 0,		XF86XK_MonBrightnessDown,  spawn,	   {.v = light_down}},
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
